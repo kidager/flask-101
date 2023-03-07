@@ -1,6 +1,9 @@
 # Created by https://www.toptal.com/developers/gitignore/api/flask,python,macos,windows,linux,visualstudiocode
 # Edit at https://www.toptal.com/developers/gitignore?templates=flask,python,macos,windows,linux,visualstudiocode
 
+docker-compose.override.yaml
+docker-compose.override.yml
+
 ### Flask ###
 instance/*
 !instance/.gitignore
