@@ -1,0 +1,32 @@
+version: '3.9'
+
+services:
+  flask-101:
+    build:
+      context: .
+      dockerfile: .docker/Dockerfile
+    restart: unless-stopped
+    volumes:
+      - ./:/var/www/app/
+    labels:
+      # Traefik is running on another repo
+      traefik.enable: true
+      # HTTP
+      traefik.http.routers.flask.service: flask
+      traefik.http.routers.flask.rule: Host(`flask.dev.localhost`)
+      traefik.http.routers.flask.entryPoints: web
+      traefik.http.routers.flask.middlewares: redirect-to-https,whitelist-local-ips
+      traefik.http.services.flask.loadbalancer.server.port: 80
+      # HTTPS
+      traefik.http.routers.flask-ssl.tls: "true"
+      traefik.http.routers.flask-ssl.service: flask
+      traefik.http.routers.flask-ssl.rule: Host(`flask.dev.localhost`)
+      traefik.http.routers.flask-ssl.entryPoints: websecure
+      traefik.http.routers.flask-ssl.middlewares: whitelist-local-ips
+    networks:
+      traefik-network:
+
+networks:
+  traefik-network:
+    external: true
+    name: traefik-network
