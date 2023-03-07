@@ -1,14 +1,18 @@
-FROM tiangolo/uwsgi-nginx-flask:python3.8-alpine
+FROM python:3.11-alpine
 
 RUN apk --no-cache --update add \
     bash \
     && rm -rf /var/cache/apk/*
 
-ENV STATIC_URL /static
-ENV STATIC_PATH /var/www/app/static
+WORKDIR /code
 
-COPY ./requirements.txt /var/www/requirements.txt
+RUN pip install gunicorn
 
-RUN pip install -r /var/www/requirements.txt
+COPY ./requirements.txt /code/requirements.txt
+RUN pip install --no-cache-dir --upgrade -r /code/requirements.txt
 
-# COPY . /var/www/
+COPY ./app /code/app
+
+COPY ./.docker/gunicorn_conf.py /etc/gunicorn_conf.py
+
+CMD ["gunicorn", "--conf", "/etc/gunicorn_conf.py", "--bind", "0.0.0.0:80", "app.main:app"]
