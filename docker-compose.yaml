@@ -7,7 +7,7 @@ services:
       dockerfile: .docker/Dockerfile
     restart: unless-stopped
     volumes:
-      - ./:/var/www/app/
+      - ./app/:/code/app/
     labels:
       # Traefik is running on another repo
       traefik.enable: true
